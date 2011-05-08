@@ -112,6 +112,11 @@ get_default_magic(void)
 	char *home, *hmagicpath;
 
 #ifndef WIN32
+#ifdef ANDROID
+	if (asprintf(&default_magic, "%s", "/system/usr/share/magic/magic.mgc") < 0)
+		return MAGIC;
+	return default_magic;
+#else // ANDROID
 	struct stat st;
 
 	if (default_magic) {
@@ -141,6 +146,7 @@ out:
 	default_magic = NULL;
 	free(hmagicpath);
 	return MAGIC;
+#endif // ANDROID
 #else
 	char *hmagicp = hmagicpath;
 	char *tmppath = NULL;
